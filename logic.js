@@ -1,6 +1,6 @@
 
   // This is our API key. Add your own API key between the ""
-  var APIKey = "19b299f54f209a60926d8dfbec925f38";
+  var APIKey = "";
 
   // Here we are building the URL we need to query the database
   var cities = []
