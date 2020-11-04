@@ -1,11 +1,10 @@
 
   // This is our API key. Add your own API key between the ""
-  var APIKey = "";
+  var APIKey = "19b299f54f209a60926d8dfbec925f38";
 
   // Here we are building the URL we need to query the database
   var cities = []
-  var city = $(this).attr("data-name");
-  var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=" + APIKey;
+  
 
  // This function handles event when a new city is searched
  $("#searchButton").on("click", function(event) {
@@ -18,39 +17,43 @@
     console.log(citySearch);
     console.log(cities);
     // Calling updateCityWeather which handles the processing of our movie array
-    updateCityweather();
+    updateCityweather(event);
+
+     // Create CODE HERE to transfer content to HTML
+  function updateCityweather() {
+
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + citySearch + "&appid=" + APIKey;
+    // We then created an AJAX call
+      $.ajax({
+          url: queryURL,
+          method: "GET"
+      }).then(function(response) {
+  
+      //console log to confirm API request is good
+      console.log(response);
+  
+      // Create CODE HERE to calculate the temperature (converted from Kelvin) and other variables
+      var tempFar = (((response.main.temp)-273.15)*(9/5)+32);
+      var cityName = (response.name);
+      var humidity = (response.main.humidity);
+      var windSpeed = (response.wind.speed);
+      // var uvIndex = (response.)
+      $(".display-4").text(cityName);
+      $(".lead").text("Temperature: " + (Math.round(tempFar)) +" °F");
+      var hum = $("<p>").text("Humidity: " + humidity + "%" );
+      $(".lead").append(hum); 
+      var wind = $("<p>").text("Wind Speed: " + windSpeed + " MPH" );
+      $(".lead").append(wind);
+      })
+      //update list of cities
+      renderCitylist();
+  
+    }
+  
   });
 
 
-  // Create CODE HERE to transfer content to HTML
-  function updateCityweather() {
-  // We then created an AJAX call
-    $.ajax({
-        url: queryURL,
-        method: "GET"
-    }).then(function(response) {
-
-    //console log to confirm API request is good
-    console.log(response);
-
-    // Create CODE HERE to calculate the temperature (converted from Kelvin) and other variables
-    var tempFar = (((response.main.temp)-273.15)*(9/5)+32);
-    var cityName = (response.name);
-    var humidity = (response.main.humidity);
-    var windSpeed = (response.wind.speed);
-    // var uvIndex = (response.)
-    $(".display-4").text(cityName);
-    $(".lead").text("Temperature: " + (Math.round(tempFar)) +" °F");
-    var hum = $("<p>").text("Humidity: " + humidity + "%" );
-    $(".lead").append(hum); 
-    var wind = $("<p>").text("Wind Speed: " + windSpeed + " MPH" );
-    $(".lead").append(wind);
-    })
-    //update list of cities
-    renderCitylist();
-
-  }
-
+ 
   // Function for displaying movie data
   function renderCitylist() {
 
