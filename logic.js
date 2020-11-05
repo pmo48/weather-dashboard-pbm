@@ -4,6 +4,8 @@ var APIKey = "19b299f54f209a60926d8dfbec925f38";
 
 // Here we are building the URL we need to query the database
 var cities = []
+var lat = ""
+var lon = ""
 
 // Renders city list upon load
 setPage()
@@ -26,8 +28,9 @@ function updateCityweather(cityName) {
     var humidity = (response.main.humidity);
     var windSpeed = (response.wind.speed);
     var iconcode = (response.weather[0].icon);
+    var lat = (response.coord.lat);
+    var lon = (response.coord.lon);
 
-    // var uvIndex = (response.)
     $(".display-4").text(cityName);
     $(".lead").text("Temperature: " + (Math.round(tempFar)) + " °F");
     var hum = $("<p>").text("Humidity: " + humidity + "%");
@@ -36,21 +39,35 @@ function updateCityweather(cityName) {
     $(".lead").append(wind);
     var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
     $("#wicon").attr('src', iconurl);
-  })
 
+    //return latitude and longitute for different call
+    var queryURL2 = "https://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
+    $.ajax({
+      url: queryURL2,
+      method: "GET"
+    }).then(function (response2) {
+    
+    // console.log(lat);
+    console.log(response2);
+    console.log(lon);
+    console.log(lat);
+    });
+  });
 
+  console.log(lon);
+  
   //update list of cities
   renderCitylist();
 
   //second API for 5 day forecast
-  var queryURL2 = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + APIKey;
+  var queryURL3 = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + APIKey;
   $.ajax({
-    url: queryURL2,
+    url: queryURL3,
     method: "GET"
-  }).then(function (response) {
+  }).then(function (response3) {
 
     //console log to confirm API request is good
-    console.log(response);
+    console.log(response3);
 
     var dateD1;
     var tempFard1;
@@ -59,15 +76,15 @@ function updateCityweather(cityName) {
 
     var cardMarkUp = "";
 
-    for (let i = 0; i < response.list.length; i++) {
+    for (let i = 0; i < response3.list.length; i++) {
       //filter out forcasts for a specific time
-      if (response.list[i].dt_txt.indexOf("12:00:00") > -1) {
+      if (response3.list[i].dt_txt.indexOf("12:00:00") > -1) {
         //creating variables for each day
 
-        dateD1 = (response.list[i].dt_txt);
-        tempFard1 = Math.round(((response.list[i].main.temp) - 273.15) * (9 / 5) + 32);
-        humidityD1 = (response.list[i].main.humidity)
-        iconcode = (response.list[i].weather[0].icon);
+        dateD1 = (response3.list[i].dt_txt);
+        tempFard1 = Math.round(((response3.list[i].main.temp) - 273.15) * (9 / 5) + 32);
+        humidityD1 = (response3.list[i].main.humidity)
+        iconcode = (response3.list[i].weather[0].icon);
 
         //confirming variables are working
 
@@ -102,14 +119,6 @@ function updateCityweather(cityName) {
 
 
   })
-
-  //pseudocode for using for loop
-
-  //1.store variables using "i" in array of objects called "fiveDay"
-  //2. create a for loop, < 5, incrementing by 1 (or 4 if different location)
-  //3. add text similar to above except for variables I'd put ("$"'.card-title").text(fiveDay.list[i].dt_txt)
-
-
 
 };
 // This function handles event when a new city is searched
@@ -168,4 +177,5 @@ function setPage() {
   cities = JSON.parse(localStorage.getItem("storedCities"));
   $(".card-group").empty();
   renderCitylist();
+  console.log(cities);
 }
