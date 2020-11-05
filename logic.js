@@ -126,12 +126,11 @@ $("#searchButton").on("click", function (event) {
   cities.push(citySearch);
   console.log(citySearch);
   console.log(cities);
-  // Calling updateCityWeather which handles the processing of our movie array
+  // Calling updateCityWeather which handles the processing of our city API
   updateCityweather(citySearch);
 
-  // This function handles event when an existing city is searched
-
-
+  // This function stores cities in local storage
+  localStorage.setItem("storedCities", JSON.stringify(cities));
 
 });
 
@@ -162,4 +161,5 @@ function renderCitylist() {
     // Adding the button to the buttons-view div
     $("#cityList").append(a);
   }
+  console.log(cities);
 }
