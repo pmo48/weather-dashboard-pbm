@@ -5,12 +5,9 @@ var APIKey = "19b299f54f209a60926d8dfbec925f38";
 // Here we are building the URL we need to query the database
 var cities = []
 
-// This code was an attempt to get the list to call the API
-// $("#listClick").on("click", function(event) {
-//   var citySearch = $(this).attr("data-name");
-//   event.preventDefault();
-//   console.log(this);
-//   }); 
+// Renders city list upon load
+setPage()
+
 function updateCityweather(cityName) {
 
   var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIKey;
@@ -131,13 +128,18 @@ $("#searchButton").on("click", function (event) {
 
   // This function stores cities in local storage
   localStorage.setItem("storedCities", JSON.stringify(cities));
-
 });
 
 $("#cityList").on("click",".list-group-item",function(event) {
   var cityInput = $(event.target).attr("data-name");
   updateCityweather(cityInput);
 });
+
+//function for initializing page
+function setPage() {
+  cities = JSON.parse(localStorage.getItem("storedCities"));
+  renderCitylist()
+}
 
 // Function for displaying movie data
 function renderCitylist() {
@@ -161,5 +163,10 @@ function renderCitylist() {
     // Adding the button to the buttons-view div
     $("#cityList").append(a);
   }
-  console.log(cities);
+}
+
+function setPage() {
+  cities = JSON.parse(localStorage.getItem("storedCities"));
+  $(".card-group").empty();
+  renderCitylist();
 }
