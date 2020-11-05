@@ -12,6 +12,8 @@ setPage()
 
 function updateCityweather(cityName) {
 
+  //empties lead class div 
+  $(".lead").empty();
   var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIKey;
   // We then created an AJAX call
   $.ajax({
@@ -32,7 +34,8 @@ function updateCityweather(cityName) {
     var lon = (response.coord.lon);
 
     $(".display-4").text(cityName);
-    $(".lead").text("Temperature: " + (Math.round(tempFar)) + " °F");
+    var temp = $("<p>").text("Temperature: " + (Math.round(tempFar)) + " °F");
+    $(".lead").append(temp);
     var hum = $("<p>").text("Humidity: " + humidity + "%");
     $(".lead").append(hum);
     var wind = $("<p>").text("Wind Speed: " + windSpeed + " MPH");
@@ -46,11 +49,20 @@ function updateCityweather(cityName) {
       url: queryURL2,
       method: "GET"
     }).then(function (response2) {
+
+      // console.log(lat);
+      console.log(response2);
+      console.log(lon);
+      console.log(lat);
+
+      var uvIndex = (response2.value)
+      console.log(uvIndex);
     
-    // console.log(lat);
-    console.log(response2);
-    console.log(lon);
-    console.log(lat);
+      var UV = $("<span>").attr("class", "badge badge-warning").text("UV: " + uvIndex);
+      $(".lead").append(UV);
+
+      //uv levels, green 1-2, yellow 3-5, orange 6-7, red 8+
+    
     });
   });
 
@@ -103,20 +115,9 @@ function updateCityweather(cityName) {
             </div>
           </div>
         `;
-
-        
-
-        // $(".card-title").text(dateD1);
-        // $(".card-text").text("Temp: " + (Math.round(tempFard1)) + " °F");
-        // var humD1 = $("<p>").text("Humidity: " + humidityD1 + "%");
-        // $(".card-text").append(humD1);
-        // var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
-        // $("#wicon1").attr('src', iconurl);
       }
     }
     $(".card-group").html(cardMarkUp);
-
-
 
   })
 
@@ -142,12 +143,6 @@ $("#cityList").on("click",".list-group-item",function(event) {
   var cityInput = $(event.target).attr("data-name");
   updateCityweather(cityInput);
 });
-
-//function for initializing page
-function setPage() {
-  cities = JSON.parse(localStorage.getItem("storedCities"));
-  renderCitylist()
-}
 
 // Function for displaying movie data
 function renderCitylist() {
