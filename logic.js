@@ -34,7 +34,6 @@ function updateCityweather(cityName) {
     $(".lead").append(hum);
     var wind = $("<p>").text("Wind Speed: " + windSpeed + " MPH");
     $(".lead").append(wind);
-
     var iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
     $("#wicon").attr('src', iconurl);
   })
