@@ -32,8 +32,10 @@ function updateCityweather(cityName) {
     var iconcode = (response.weather[0].icon);
     var lat = (response.coord.lat);
     var lon = (response.coord.lon);
+    var date = moment(response.dt_txt).format("dddd, MMM D");
 
-    $(".display-4").text(cityName);
+    $(".display-2").text(cityName);
+    $(".display-4").text(date)
     var temp = $("<p>").text("Temperature: " + (Math.round(tempFar)) + " °F");
     $(".lead").append(temp);
     var hum = $("<p>").text("Humidity: " + humidity + "%");
@@ -69,14 +71,10 @@ function updateCityweather(cityName) {
         $(".badge").removeClass("badge-warning");
       } else {
         return;
-      }
-
-      //uv levels, green 1-2, yellow 3-5, orange 6-7, red 8+
-    
+      }    
     });
   });
 
-  console.log(lon);
   
   //update list of cities
   renderCitylist();
@@ -103,7 +101,7 @@ function updateCityweather(cityName) {
       if (response3.list[i].dt_txt.indexOf("12:00:00") > -1) {
         //creating variables for each day
 
-        dateD1 = (response3.list[i].dt_txt);
+        dateD1 = moment(response3.list[i].dt_txt).format("dddd, MMM D");
         tempFard1 = Math.round(((response3.list[i].main.temp) - 273.15) * (9 / 5) + 32);
         humidityD1 = (response3.list[i].main.humidity)
         iconcode = (response3.list[i].weather[0].icon);
@@ -113,6 +111,7 @@ function updateCityweather(cityName) {
         console.log(tempFard1);
         console.log(dateD1);
         console.log(humidityD1);
+        console.log(dateD1);
 
         //add variables to card
         cardMarkUp += 
