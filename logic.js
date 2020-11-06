@@ -1,4 +1,4 @@
-
+$(document).ready(function() {
 // This is our API key. Add your own API key between the ""
 var APIKey = "19b299f54f209a60926d8dfbec925f38";
 
@@ -60,6 +60,16 @@ function updateCityweather(cityName) {
     
       var UV = $("<span>").attr("class", "badge badge-warning").text("UV: " + uvIndex);
       $(".lead").append(UV);
+
+      if (uvIndex < 2.9) {
+        $(".badge").addClass("badge-success");
+        $(".badge").removeClass("badge-warning");
+      } else if (uvIndex > 6) {
+        $(".badge").addClass("badge-danger");
+        $(".badge").removeClass("badge-warning");
+      } else {
+        return;
+      }
 
       //uv levels, green 1-2, yellow 3-5, orange 6-7, red 8+
     
@@ -169,8 +179,24 @@ function renderCitylist() {
 }
 
 function setPage() {
-  cities = JSON.parse(localStorage.getItem("storedCities"));
-  $(".card-group").empty();
-  renderCitylist();
-  console.log(cities);
+ var storedCities = JSON.parse(localStorage.getItem("storedCities"));
+
+  if (storedCities !== null) {
+    cities = storedCities;
+    var lastCity = cities[cities.length - 1]
+    updateCityweather(lastCity);
+    $(".card-group").empty();
+    renderCitylist();
+    console.log(cities);
+  } else {
+    localStorage.setItem("storedCities", "[]");
+  }
+   
 }
+
+$("#clearButton").on("click", function () {
+  cities = [];
+  localStorage.setItem("storedCities", JSON.stringify(cities));
+  renderCitylist();
+});
+}); 
