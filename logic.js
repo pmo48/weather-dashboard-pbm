@@ -1,8 +1,8 @@
 $(document).ready(function() {
-// This is our API key. Add your own API key between the ""
+// Variable to store API key
 var APIKey = "19b299f54f209a60926d8dfbec925f38";
 
-// Here we are building the URL we need to query the database
+// variable for cities searched and latitude/longitute
 var cities = []
 var lat = ""
 var lon = ""
@@ -10,21 +10,22 @@ var lon = ""
 // Renders city list upon load
 setPage()
 
+// function to update today's weather and 5 day forecast upon click
+
 function updateCityweather(cityName) {
 
   //empties lead class div 
   $(".lead").empty();
+
+  // variable to store queryURL
   var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + APIKey;
-  // We then created an AJAX call
+  // call to get the API and return a response
   $.ajax({
     url: queryURL,
     method: "GET"
   }).then(function (response) {
 
-    //console log to confirm API request is good
-    console.log(response);
-
-    // Create CODE HERE to calculate the temperature (converted from Kelvin) and other variables
+    // Variables stored from API response
     var tempFar = (((response.main.temp) - 273.15) * (9 / 5) + 32);
     var cityName = (response.name);
     var humidity = (response.main.humidity);
@@ -34,6 +35,7 @@ function updateCityweather(cityName) {
     var lon = (response.coord.lon);
     var date = moment(response.dt_txt).format("dddd, MMM D");
 
+    // Adding variables to HTML elements and appending
     $(".display-2").text(cityName);
     $(".display-4").text(date)
     var temp = $("<p>").text("Temperature: " + (Math.round(tempFar)) + " °F");
@@ -52,16 +54,15 @@ function updateCityweather(cityName) {
       method: "GET"
     }).then(function (response2) {
 
-      // console.log(lat);
-      console.log(response2);
-      console.log(lon);
-      console.log(lat);
-
+      // stores UV index
       var uvIndex = (response2.value)
-      console.log(uvIndex);
+
+      // creates HTML and append it to class
     
       var UV = $("<span>").attr("class", "badge badge-warning").text("UV: " + uvIndex);
       $(".lead").append(UV);
+
+      // conditionals to color UV index based on index size
 
       if (uvIndex < 2.9) {
         $(".badge").addClass("badge-success");
@@ -76,7 +77,7 @@ function updateCityweather(cityName) {
   });
 
   
-  //update list of cities
+  //update list of cities after searching
   renderCitylist();
 
   //second API for 5 day forecast
@@ -86,9 +87,6 @@ function updateCityweather(cityName) {
     method: "GET"
   }).then(function (response3) {
 
-    //console log to confirm API request is good
-    console.log(response3);
-
     var dateD1;
     var tempFard1;
     var humidityD1;
@@ -97,26 +95,20 @@ function updateCityweather(cityName) {
     var cardMarkUp = "";
 
     for (let i = 0; i < response3.list.length; i++) {
-      //filter out forcasts for a specific time
+      //filter out forecasts for a specific time
       if (response3.list[i].dt_txt.indexOf("12:00:00") > -1) {
-        //creating variables for each day
+        
+        //creating variables for each element of response used
 
-        dateD1 = moment(response3.list[i].dt_txt).format("dddd, MMM D");
+        dateD1 = moment(response3.list[i].dt_txt).format("ddd, MMM D");
         tempFard1 = Math.round(((response3.list[i].main.temp) - 273.15) * (9 / 5) + 32);
         humidityD1 = (response3.list[i].main.humidity)
         iconcode = (response3.list[i].weather[0].icon);
 
-        //confirming variables are working
-
-        console.log(tempFard1);
-        console.log(dateD1);
-        console.log(humidityD1);
-        console.log(dateD1);
-
-        //add variables to card
+        //add variables to card class
         cardMarkUp += 
         `
-          <div class="card">
+          <div class="card text-white bg-primary mb-3 mr-3" style="max-width: 18rem;">
             <div class="card-body">
               <h5 class="card-title">${dateD1}</h5>
               <div id="icon"><img id="wicon1" src="http://openweathermap.org/img/w/${iconcode}.png" alt="Weather icon"></div>
@@ -126,6 +118,9 @@ function updateCityweather(cityName) {
         `;
       }
     }
+
+    //displays 5 day forecast title and displays template literal to card-group
+    $(".display-3").text("Five Day Forecast:")
     $(".card-group").html(cardMarkUp);
 
   })
@@ -137,10 +132,8 @@ $("#searchButton").on("click", function (event) {
   // This line grabs the input from the textbox
   var citySearch = $("#citySearchtext").val().trim();
 
-  // Adding city from the textbox to the "city" array
+  // Adding city from the textbox to the "cities" array
   cities.push(citySearch);
-  console.log(citySearch);
-  console.log(cities);
   // Calling updateCityWeather which handles the processing of our city API
   updateCityweather(citySearch);
 
@@ -148,16 +141,16 @@ $("#searchButton").on("click", function (event) {
   localStorage.setItem("storedCities", JSON.stringify(cities));
 });
 
+  //eventlistener tied to any listed city
 $("#cityList").on("click",".list-group-item",function(event) {
   var cityInput = $(event.target).attr("data-name");
   updateCityweather(cityInput);
 });
 
-// Function for displaying movie data
+// Function for displaying city list
 function renderCitylist() {
 
   // Deleting the cities prior to adding updated cities
-  // (this is necessary otherwise you will have repeat buttons)
   $("#cityList").empty();
 
   // Looping through the array of cities
@@ -166,20 +159,24 @@ function renderCitylist() {
     // Then dynamicaly generating list item for each city in the array
 
     var a = $("<a>");
-    // Adding a class of movie-btn to our button
-    a.addClass("list-group-item list-group-item-action");
+    // Adding a class to city list items
+    a.addClass("list-group-item list-group-item-action bg-light");
     // Adding a data-attribute
     a.attr("data-name", cities[i]);
-    // Providing the initial button text
+    // Providing the initial list text
     a.text(cities[i]);
-    // Adding the button to the buttons-view div
+    // Adding the list item to the city div
     $("#cityList").append(a);
   }
 }
 
+//sets the page with upon load
+
 function setPage() {
+  //variable to store cities
  var storedCities = JSON.parse(localStorage.getItem("storedCities"));
 
+// either puts stored cities in cities array and calls the last city to update the weather/forecasts, or initialises stored cities with an empty array if first time visiting page
   if (storedCities !== null) {
     cities = storedCities;
     var lastCity = cities[cities.length - 1]
@@ -193,7 +190,8 @@ function setPage() {
    
 }
 
-$("#clearButton").on("click", function () {
+// reset button to clear cities, clear local storage and re-render list
+$("#resetButton").on("click", function () {
   cities = [];
   localStorage.setItem("storedCities", JSON.stringify(cities));
   renderCitylist();
