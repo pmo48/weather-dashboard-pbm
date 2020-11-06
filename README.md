@@ -1,6 +1,6 @@
 # weather-dashboard-pbm
 
-This work day scheduler is intended to provide a basic workday scheduler that stores notes in localstorage and updates the timeblocks based on time of day.
+This weather dashboard provides the current weather of any searched city worldwide including a 5-day forecast.
 
 ![weather dashboard image](./Assets/Images/weather.png)
 
